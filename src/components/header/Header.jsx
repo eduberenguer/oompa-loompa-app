@@ -8,7 +8,7 @@ const ContainerHeader = styled.div`
     width: 100%;
     flex-direction: row;
     background-color: #D8D8D8;
-    padding-left: 50px;
+    padding-left: 15%;
 `
 
 const Logo = styled.img`
@@ -17,11 +17,15 @@ const Logo = styled.img`
    margin-right: 20px;
 `
 
+const HeaderText = styled.p`
+    font-weight: 800;
+`
+
 export const Header = () => {
     return (
         <ContainerHeader>
             <Link to="/"><Logo src={LOGO} alt="logo"></Logo></Link>
-            <h4>Oompa Loompa´s Crew</h4>
+            <HeaderText>Oompa Loompa´s Crew</HeaderText>
         </ContainerHeader>
     )
 }

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {User} from '../user/User'
 import ICON from '../assets/icon_search.png'
+import { fechedData } from '../../api/request'
 
 const ContainerData = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    max-width: 70%;
+    max-width: 75%;
     margin: 0 auto;
 `
 
@@ -17,18 +18,29 @@ const HeaderMain = styled.div`
     align-items: center;
     justify-content: flex-end;
     padding: 30px;
-    margin-right: 150px;
+    margin-right: 15%;
     position: relative;
 `
 
 const ContainerTitle = styled.div`
+    padding-bottom: 50px;
+`
 
+const TitleText = styled.p`
+    font-size: 45px;
+    margin: 0;
+`
+
+const SubTitleText = styled.p`
+    font-size: 35px;
+    color: #5B5B5B;
+    margin: 0;
 `
 
 const Input = styled.input`
     padding: 7px;
     border-radius: 8px;
-
+    font-weight: 100;
 `
 
 const IconSearch = styled.img`
@@ -46,31 +58,22 @@ export const Main = () => {
     const [dataFilter, setDataFilter] = useState("");
     const [page, setPage ] = useState(1)
 
-    const fechedData = async (page) => {
-        let URL_API = `https://2q2woep105.execute-api.eu-west-1.amazonaws.com/napptilus/oompa-loompas?page=${page}`
-        const response = await fetch(URL_API)
-        const json = await response.json()
-        setLoading(false)
-        setData(data.concat(json.results))
-        const date = new Date()
-        window.localStorage.setItem('data', JSON.stringify(data.concat(json.results)))
-        window.localStorage.setItem('page', page)
-        window.localStorage.setItem('date', date)
-    }
-
     useEffect(() => {
+        setLoading(true);
         const currentDate = new Date()
         const requestDate = new Date(window.localStorage.getItem('date')) 
-        requestDate.setDate(requestDate.getDate() + 1)
+        requestDate && requestDate.setDate(requestDate.getDate() + 1)
         if(currentDate > requestDate){
             window.localStorage.clear()
-            fechedData(page)
+            fechedData(data, page).then(res => {
+                setData(data.concat(res))
+                setLoading(false)
+            })
         }else{
             setData(JSON.parse(window.localStorage.getItem("data")))
             setPage(JSON.parse(window.localStorage.getItem("page")))
             setLoading(false)
         }
-        setLoading(false)
     },[])
 
     const handleChange = (e) => {
@@ -85,14 +88,14 @@ export const Main = () => {
         e.preventDefault()
         const sumPage = page + 1 
         setPage(sumPage)
-        fechedData(sumPage)
+        fechedData(data, sumPage).then(res => setData(data.concat(res)))
     }
 
     const handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
         if (bottom) { onInView(e)}
     }
-     
+
     return (
         <div onScroll={handleScroll}  style={{overflowY: 'scroll', maxHeight: '100vh'}}>
             <HeaderMain>
@@ -100,8 +103,8 @@ export const Main = () => {
                 <IconSearch src={ICON}/>
             </HeaderMain>
             <ContainerTitle>
-                <h1>Find your Oompa Loompa</h1>
-                <h2>There are more than 100k</h2>
+                <TitleText>Find your Oompa Loompa</TitleText>
+                <SubTitleText>There are more than 100k</SubTitleText>
             </ContainerTitle>
             <ContainerData >
                 {loading ? <p>Loading...</p> : dataFilter ? <User dataUser={dataFilter}/> : <User dataUser={data}/> }
