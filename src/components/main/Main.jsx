@@ -73,7 +73,6 @@ export const Main = () => {
 
     const handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-        console.log(e.target.scrollHeight, e.target.scrollTop, e.target.clientHeight)
         if (bottom) { onInView(e) }
     }
     return (

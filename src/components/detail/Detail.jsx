@@ -65,7 +65,7 @@ export const Detail = () => {
     },[])
 
     const { image, first_name, last_name, gender, profession, description} = detailData
-    console.log(detailData)
+
     return(
         <div>
             {loading 
