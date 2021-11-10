@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {User} from '../user/User'
-import ICON from '../assets/icon_search.png'
 import { fechedData } from '../../api/request'
+import { HeaderMain } from './HeaderMain'
+import { CustomSpinner } from '../utils/CustomSpinner'
 
 const ContainerData = styled.div`
     display: flex;
@@ -11,15 +12,6 @@ const ContainerData = styled.div`
     flex-wrap: wrap;
     max-width: 75%;
     margin: 0 auto;
-`
-
-const HeaderMain = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 30px;
-    margin-right: 15%;
-    position: relative;
 `
 
 const ContainerTitle = styled.div`
@@ -35,21 +27,6 @@ const SubTitleText = styled.p`
     font-size: 35px;
     color: #5B5B5B;
     margin: 0;
-`
-
-const Input = styled.input`
-    padding: 7px;
-    border-radius: 8px;
-    font-weight: 100;
-`
-
-const IconSearch = styled.img`
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-left: solid 1px grey;
-    padding-left: 10px;
-    padding-right: 10px;
 `
 
 export const Main = () => {
@@ -74,14 +51,17 @@ export const Main = () => {
             setPage(JSON.parse(window.localStorage.getItem("page")))
             setLoading(false)
         }
-    },[])
+    },[setData])
 
-    const handleChange = (e) => {
-        const value = e.target.value;
+    const setValueInput = (value) => {
+        if(!value){
+            setDataFilter("")
+            return
+        }
         const filter = data && data.filter(item => item.first_name.toLowerCase().includes(value.toLowerCase()) 
-                                                   || item.last_name.toLowerCase().includes(value.toLowerCase())
-                                                   || item.profession.toLowerCase().includes(value.toLowerCase()));
-        setDataFilter(filter);
+                                                || item.last_name.toLowerCase().includes(value.toLowerCase())
+                                                || item.profession.toLowerCase().includes(value.toLowerCase()))
+        setDataFilter(filter)
     }
 
     const onInView = (e) => {
@@ -93,21 +73,18 @@ export const Main = () => {
 
     const handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-        if (bottom) { onInView(e)}
+        console.log(e.target.scrollHeight, e.target.scrollTop, e.target.clientHeight)
+        if (bottom) { onInView(e) }
     }
-
     return (
         <div onScroll={handleScroll}  style={{overflowY: 'scroll', maxHeight: '100vh'}}>
-            <HeaderMain>
-                <Input placeholder="Search" onChange={handleChange} />
-                <IconSearch src={ICON}/>
-            </HeaderMain>
+            <HeaderMain setValueInput={setValueInput}/>
             <ContainerTitle>
                 <TitleText>Find your Oompa Loompa</TitleText>
                 <SubTitleText>There are more than 100k</SubTitleText>
             </ContainerTitle>
             <ContainerData >
-                {loading ? <p>Loading...</p> : dataFilter ? <User dataUser={dataFilter}/> : <User dataUser={data}/> }
+                {loading ? <CustomSpinner />: <User dataUser={!dataFilter ? data : dataFilter}/> }
             </ContainerData>
         </div>
     );

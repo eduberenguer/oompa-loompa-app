@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams} from 'react-router-dom'
+import { fechedDetailData } from '../../api/requestDetail'
 import styled from 'styled-components'
+import { CustomSpinner } from '../utils/CustomSpinner' 
 import { NameUserText, DescriptionUserText, ProfessionUserText, GendreUserText} from '../../components/utils/userText.js'
  
 const ContainerDetail = styled.div`
@@ -19,6 +21,7 @@ const ContainerImage = styled.div``
 
 const DetailImage = styled.img`
     width: 320px;
+    margin-bottom: 30px;
     @media (min-width: 800px) {
         width: 550px;
     }
@@ -29,9 +32,11 @@ const DetailImage = styled.img`
 
 const ContainerInfo = styled.div`
     padding: 0px 20px 0px 20px;
+    width: 60%;
     text-align: left;
     @media (max-width: 1300px) {
         padding: 0px;
+        width: 100%;
     }
 `
 
@@ -39,20 +44,6 @@ export const Detail = () => {
     const [ detailData, setDetailData ] = useState('')
     const [ loading, setLoading ] = useState(true)
     const userId = useParams()
-
-    const fechedDetailDate = async () => {
-        const API_URL_DETAIL = `https://2q2woep105.execute-api.eu-west-1.amazonaws.com/napptilus/oompa-loompas/${userId.id}`
-        fetch(API_URL_DETAIL)
-            .then(response => {
-                return response.json()
-            })
-            .then(json => {
-                setLoading(false)
-                setDetailData(json)
-                window.localStorage.setItem('detailData', JSON.stringify(json))
-                window.localStorage.setItem('detailDataDate', new Date())
-            });
-    }
 
     const checkRetrievedDate = () => {
         const currentDate = new Date()
@@ -64,21 +55,29 @@ export const Detail = () => {
 
     useEffect(() => {
         const checkValidate = checkRetrievedDate()
-        !checkValidate ? fechedDetailDate() : setDetailData(window.localStorage.getItem('detailDataDate'))
+        if(!checkValidate){
+            fechedDetailData(userId.id).then(res => setDetailData(res))
+            setLoading(false)
+        }else{
+            setDetailData(window.localStorage.getItem('detailDataDate'))
+        }
+
     },[])
 
+    const { image, first_name, last_name, gender, profession, description} = detailData
+    console.log(detailData)
     return(
         <div>
             {loading 
-                ? <p>Loading...</p> 
+                ? <CustomSpinner />
                 : <ContainerDetail>
                     <ContainerImage>
-                        <DetailImage src={detailData.image} alt={detailData.first_name} />
+                        <DetailImage src={image} alt={first_name} />
                     </ContainerImage>
                     <ContainerInfo>
-                        <NameUserText>{detailData.first_name} {detailData.last_name}</NameUserText>
-                        <GendreUserText>{detailData.gender == 'F' ? 'Female': 'Male'}</GendreUserText>
-                        <ProfessionUserText>{detailData.profession}</ProfessionUserText>
+                        <NameUserText>{first_name} {last_name}</NameUserText>
+                        <GendreUserText>{gender}</GendreUserText>
+                        <ProfessionUserText>{profession}</ProfessionUserText>
                         <DescriptionUserText dangerouslySetInnerHTML={{__html: detailData.description}}></DescriptionUserText>
                     </ContainerInfo>
                 </ContainerDetail>

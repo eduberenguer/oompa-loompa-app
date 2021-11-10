@@ -4,6 +4,7 @@ export const NameUserText = styled.p`
     font-size: 20px;
     font-weight: bold;
     margin: 0;
+    margin-bottom: 2px;
 `
 
 export const GendreUserText = styled(NameUserText)`
@@ -17,5 +18,5 @@ export const ProfessionUserText = styled(GendreUserText)`
 
 export const DescriptionUserText = styled(GendreUserText)`
     margin-top: 20px;
-    font-style: italic;
+    font-weight: 500;
 `

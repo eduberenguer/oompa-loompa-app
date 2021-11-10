@@ -4,14 +4,11 @@ import styled from 'styled-components';
 import { NameUserText, ProfessionUserText, GendreUserText} from '../../components/utils/userText.js'
 
 const ContainerUser = styled.div`
-    margin: 20px;
+    margin: 10px;
 `
 const ContainerTextBox = styled.div`
     text-align: left;
-    margin-top: 10px;
-`
-const CustomNameUserText = styled(NameUserText)`
-    margin: 2px;
+    margin-top: 25px;
 `
 
 export const User = (props) => {
@@ -20,9 +17,9 @@ export const User = (props) => {
         props.dataUser && props.dataUser.map((item, index) => {
             return (
                 <ContainerUser key={item.id} >
-                    <Link to={`/${item.id}`}><img src={item.image} alt={item.id} width="400px"/></Link>
+                    <Link to={`/${item.id}`}><img src={item.image} alt={item.id} width="340px"/></Link>
                     <ContainerTextBox>
-                        <CustomNameUserText>{item.first_name} {item.last_name}</CustomNameUserText>
+                        <NameUserText>{item.first_name} {item.last_name}</NameUserText>
                         <GendreUserText>{item.gender == 'F' ? 'Female': 'Male'}</GendreUserText>
                         <ProfessionUserText>{item.profession}</ProfessionUserText>
                     </ContainerTextBox>
